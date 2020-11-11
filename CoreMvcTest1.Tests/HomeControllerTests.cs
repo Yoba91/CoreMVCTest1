@@ -14,24 +14,28 @@ namespace CoreMvcTest1.Tests
     {
         class ModelCompleteFakeRepository : IRepository
         {
-            public IEnumerable<Product> Products { get; } = new Product[]
-            {
-                new Product {Name = "Kayak", Price = 5M},
-                new Product {Name = "Lifejacket", Price = 48.95M},
-                new Product {Name = "Socker ball", Price = 19.50M},
-                new Product {Name = "Corner flag", Price = 34.95M}
-            };
+            public IEnumerable<Product> Products { get; set; }
 
             public void AddProduct(Product product)
             {
-                
+
             }
         }
-        [Test]
-        public void IndexActionModelIsComplite()
+        [TestCase(5, 48, 19, 34)]
+        [TestCase(25, 8, 1, 3)]
+        public void IndexActionModelIsComplite(decimal price1, decimal price2, decimal price3, decimal price4)
         {
             var controller = new HomeController();
-            controller.Repository = new ModelCompleteFakeRepository();
+            controller.Repository = new ModelCompleteFakeRepository
+            {
+                Products = new Product[]
+                {
+                    new Product {Name = "Kayak", Price = price1},
+                    new Product {Name = "Lifejacket", Price = price2},
+                    new Product {Name = "Socker ball", Price = price3},
+                    new Product {Name = "Corner flag", Price = price4},
+                }
+            };
             var model = (controller.Index() as ViewResult)?.ViewData.Model as IEnumerable<Product>;
             Assert.AreEqual(controller.Repository.Products.Count(), model.Count());
         }
